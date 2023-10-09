@@ -27,7 +27,7 @@ jobs:
           settings: 'sftp:auto-confirm=yes'
           # Mirror command options
           localDir: '.'
-          remoteDir: '/heartsjriston'
+          remoteDir: '/reversiristonj'
           reverse: true
           ignoreFile: '.lftp_ignore'
           options: '--verbose'
