@@ -1,0 +1,2 @@
+# bgareversi
+Reversi tutorial
