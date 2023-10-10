@@ -52,7 +52,15 @@
     width: 536px;
     height: 528px;
     background-image: url('img/board.jpg');
- }
+    position: relative;
+}
+
+.square {
+    width: 62px;
+    height: 62px;
+    position: absolute;
+    background-color: red;
+}
 
 
 /*
