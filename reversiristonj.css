@@ -62,6 +62,16 @@
     background-color: red;
 }
 
+.token {
+    width: 56px;
+    height: 56px;
+    position: absolute;
+    background-image: url('img/tokens.png');
+}
+
+.tokencolor_ffffff { background-position: 0px 0px;   }
+.tokencolor_000000 { background-position: -56px 0px;   }
+
 
 /*
     Example of CSS sprites (a black token and a white token, 20x20px each, embedded in the same "tokens.png" 40x20px image):
