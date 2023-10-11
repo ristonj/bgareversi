@@ -261,7 +261,7 @@ class reversiristonj extends Table
     }    
     */
 
-    function stNextTurn()
+    function stNextPlayer()
     {
         return;
     }
