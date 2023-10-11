@@ -237,7 +237,7 @@ class reversiristonj extends Table
     function argPlayerTurn()
     {
         return array(
-            'playerId' => self::getCurrentPlayerId()
+            'actplayer' => self::getCurrentPlayerId()
         );
     }
 
