@@ -234,6 +234,11 @@ class reversiristonj extends Table
     }    
     */
 
+    function argPlayerTurn()
+    {
+        return self::getCurrentPlayerId();
+    }
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
@@ -255,6 +260,11 @@ class reversiristonj extends Table
         $this->gamestate->nextState( 'some_gamestate_transition' );
     }    
     */
+
+    function stNextTurn()
+    {
+        return;
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
