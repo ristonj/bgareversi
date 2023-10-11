@@ -169,6 +169,41 @@ class reversiristonj extends Table
         In this space, you can put any utility methods useful for your game logic
     */
 
+    function getOpponentPlayerId()
+    {
+        $player_ids =  array_keys($this->loadPlayersBasicInfos());
+        $opposite_player_id = self::getCurrentPlayerId();
+        if($player_ids[0] == self::getCurrentPlayerId())
+        {
+            $opposite_player_id = $player_ids[1];
+        }
+        else
+        {
+            $opposite_player_id = $player_ids[0];
+        }
+        return $opposite_player_id;
+    }
+    function getTurnedOverDiscs($board,$x,$y)
+    {
+        $turned_discs = 0;
+        $new_x = $x;
+        $opponent_player_id = self::getOpponentPlayerId();
+        
+        for($i = -1; $i <= 1; $i++)
+        {
+            $new_x += $i;
+            $new_y = $y;
+            for($j = -1; $j <= 1; $j++)
+            {
+                if(($i != 0) && ($j != 0))
+                {
+                    $new_y += $j;
+                    
+                }
+            }
+        }
+    }
+
 
 
 //////////////////////////////////////////////////////////////////////////////
