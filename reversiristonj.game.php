@@ -236,7 +236,7 @@ class reversiristonj extends Table
 
     function argPlayerTurn()
     {
-        return self::getCurrentPlayerId();
+        return 0;
     }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -261,10 +261,10 @@ class reversiristonj extends Table
     }    
     */
 
-    /*function stNextPlayer()
+    function stNextPlayer()
     {
         return;
-    }*/
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
