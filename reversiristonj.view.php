@@ -40,7 +40,7 @@ class view_reversiristonj_reversiristonj extends game_view
         $players = $this->game->loadPlayersBasicInfos();
         $players_nbr = count( $players );
 
-        $this->page->begin_block( "reversi_reversi", "square" );
+        $this->page->begin_block( "reversiristonj_reversiristonj", "square" );
         
         $hor_scale = 64.8;
         $ver_scale = 64.4;
