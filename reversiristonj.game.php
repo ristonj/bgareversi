@@ -74,7 +74,6 @@ class reversiristonj extends Table
         }
         $sql .= implode( ',', $values );
         self::DbQuery( $sql );
-        self::reattributeColorsBasedOnPreferences( $players, $gameinfos['player_colors'] );
         self::reloadPlayersBasicInfos();
         
         /************ Start the game initialization *****/
