@@ -57,8 +57,16 @@ function (dojo, declare) {
             }
             
             // TODO: Set up your game interface here, according to "gamedatas"
-            this.addTokenOnBoard( 2, 2, this.player_id );
- 
+            for( var i in gamedatas.board )
+            {
+                var square = gamedatas.board[i];
+                
+                if( square.player !== null )
+                {
+                    this.addTokenOnBoard( square.x, square.y, square.player );
+                }
+            }
+
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
