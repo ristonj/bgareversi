@@ -234,10 +234,10 @@ class reversiristonj extends Table
     }    
     */
 
-    function argPlayerTurn()
+    /*function argPlayerTurn()
     {
         return self::getCurrentPlayerId();
-    }
+    }*/
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
@@ -261,10 +261,10 @@ class reversiristonj extends Table
     }    
     */
 
-    function stNextPlayer()
+    /*function stNextPlayer()
     {
         return;
-    }
+    }*/
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
