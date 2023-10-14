@@ -189,10 +189,11 @@ class reversiristonj extends Table
         {
             return null;
         }
-        return array_filter($board, function($v) use ($x, $y)
-        {
-            return ($v['x'] == $x && $v['y'] == $y);
-        })[0]['player'];
+        return array_values(
+            array_filter($board, function($v) use ($x, $y)
+            {
+                return ($v['x'] == $x && $v['y'] == $y);
+            }))[0]['player'];
     }
     function getPossibleMoves($active_player_id)
     {
