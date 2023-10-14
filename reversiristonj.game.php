@@ -208,9 +208,6 @@ class reversiristonj extends Table
                 if(self::getPlayerByPosition($board, $x, $y) == null)
                 {
                     $turnedOverDiscs = self::getTurnedOverDiscs($board, $active_player_id, $x, $y);
-                    self::dump( "x: ", $x ); 
-                    self::dump( "y: ", $y );
-                    self::dump( "Turned over discs:", $turnedOverDiscs);
                     if( $turnedOverDiscs > 0)
                     {
                         array_push($result, array("x" => $x, "y" => $y));
@@ -218,6 +215,7 @@ class reversiristonj extends Table
                 }
             }
         }
+        self::dump("Result array: ", $result);
         return $result;
     }
     function getTurnedDiscsByDirection($board,$active_player_id,$x,$y,$i,$j)
