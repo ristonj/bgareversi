@@ -102,7 +102,6 @@ $stats_type = array(
                                 "name" => totranslate("player test stat 2"), 
                                 "type" => "float" )
 
-*/    
-    )
+*/
 
 );
