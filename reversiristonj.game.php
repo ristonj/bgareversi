@@ -299,6 +299,80 @@ class reversiristonj extends Table
     }
     
     */
+    function playDisc( $x, $y )
+    {
+        // Check that this player is active and that this action is possible at this moment
+        self::checkAction( 'playDisc' );
+        $board = self::getBoard();
+        $player_id = self::getActivePlayerId();
+        $turnedOverDiscs = self::getTurnedOverDiscs( $x, $y, $player_id, $board );
+        
+        if( count( $turnedOverDiscs ) > 0 )
+        {
+            $sql = "UPDATE board SET board_player='$player_id'
+                    WHERE ( board_x, board_y) IN ( ";
+            
+            foreach( $turnedOverDiscs as $turnedOver )
+            {
+                $sql .= "('".$turnedOver['x']."','".$turnedOver['y']."'),";
+            }
+            $sql .= "('$x','$y') ) ";
+                       
+            self::DbQuery( $sql );
+            $sql = "UPDATE player
+                    SET player_score = (
+                    SELECT COUNT( board_x ) FROM board WHERE board_player=player_id
+                    )";
+            self::DbQuery( $sql );
+            
+            // Statistics
+            self::incStat( count( $turnedOverDiscs ), "turnedOver", $player_id );
+            if( ($x==1 && $y==1) || ($x==8 && $y==1) || ($x==1 && $y==8) || ($x==8 && $y==8) )
+                self::incStat( 1, 'discPlayedOnCorner', $player_id );
+            else if( $x==1 || $x==8 || $y==1 || $y==8 )
+                self::incStat( 1, 'discPlayedOnBorder', $player_id );
+            else if( $x>=3 && $x<=6 && $y>=3 && $y<=6 )
+                self::incStat( 1, 'discPlayedOnCenter', $player_id );
+                        // Update scores according to the number of disc on board
+                        $sql = "UPDATE player
+                        SET player_score = (
+                        SELECT COUNT( board_x ) FROM board WHERE board_player=player_id
+                        )";
+                self::DbQuery( $sql );
+                
+                // Statistics
+                self::incStat( count( $turnedOverDiscs ), "turnedOver", $player_id );
+                if( ($x==1 && $y==1) || ($x==8 && $y==1) || ($x==1 && $y==8) || ($x==8 && $y==8) )
+                    self::incStat( 1, 'discPlayedOnCorner', $player_id );
+                else if( $x==1 || $x==8 || $y==1 || $y==8 )
+                    self::incStat( 1, 'discPlayedOnBorder', $player_id );
+                else if( $x>=3 && $x<=6 && $y>=3 && $y<=6 )
+                    self::incStat( 1, 'discPlayedOnCenter', $player_id );
+    
+                // Notify
+                self::notifyAllPlayers( "playDisc", clienttranslate( '${player_name} plays a disc and turns over ${returned_nbr} disc(s)' ), array(
+                    'player_id' => $player_id,
+                    'player_name' => self::getActivePlayerName(),
+                    'returned_nbr' => count( $turnedOverDiscs ),
+                    'x' => $x,
+                    'y' => $y
+                ) );
+    
+                self::notifyAllPlayers( "turnOverDiscs", '', array(
+                    'player_id' => $player_id,
+                    'turnedOver' => $turnedOverDiscs
+                ) );
+                
+                $newScores = self::getCollectionFromDb( "SELECT player_id, player_score FROM player", true );
+                self::notifyAllPlayers( "newScores", "", array(
+                    "scores" => $newScores
+                ) );
+            // Then, go to the next state
+            $this->gamestate->nextState( 'playDisc' );
+        }
+        else
+            throw new BgaSystemException( "Impossible move" );
+    }
 
     
 //////////////////////////////////////////////////////////////////////////////
@@ -359,7 +433,55 @@ class reversiristonj extends Table
 
     function stNextPlayer()
     {
-        return;
+        // Active next player
+        $player_id = self::activeNextPlayer();
+
+        // Check if both player has at least 1 discs, and if there are free squares to play
+        $player_to_discs = self::getCollectionFromDb( "SELECT board_player, COUNT( board_x )
+                                                       FROM board
+                                                       GROUP BY board_player", true );
+
+        if( ! isset( $player_to_discs[ null ] ) )
+        {
+            // Index 0 has not been set => there's no more free place on the board !
+            // => end of the game
+            $this->gamestate->nextState( 'endGame' );
+            return ;
+        }
+        else if( ! isset( $player_to_discs[ $player_id ] ) )
+        {
+            // Active player has no more disc on the board => he looses immediately
+            $this->gamestate->nextState( 'endGame' );
+            return ;
+        }
+        
+        // Can this player play?
+
+        $possibleMoves = self::getPossibleMoves( $player_id );
+        if( count( $possibleMoves ) == 0 )
+        {
+
+            // This player can't play
+            // Can his opponent play ?
+            $opponent_id = self::getUniqueValueFromDb( "SELECT player_id FROM player WHERE player_id!='$player_id' " );
+            if( count( self::getPossibleMoves( $opponent_id ) ) == 0 )
+            {
+                // Nobody can move => end of the game
+                $this->gamestate->nextState( 'endGame' );
+            }
+            else
+            {            
+                // => pass his turn
+                $this->gamestate->nextState( 'cantPlay' );
+            }
+        }
+        else
+        {
+            // This player can play. Give him some extra time
+            self::giveExtraTime( $player_id );
+            $this->gamestate->nextState( 'nextTurn' );
+        }
+
     }
 
 //////////////////////////////////////////////////////////////////////////////

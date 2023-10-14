@@ -67,6 +67,8 @@ function (dojo, declare) {
                 }
             }
 
+            dojo.query( '.square' ).connect( 'onclick', this, 'onPlayDisc' );
+
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
 
@@ -203,6 +205,32 @@ function (dojo, declare) {
             _ make a call to the game server
         
         */
+
+        onPlayDisc: function( evt )
+        {
+            // Stop this event propagation
+            dojo.stopEvent( evt );
+
+            // Get the clicked square x and y
+            // Note: square id format is "square_X_Y"
+            var coords = evt.currentTarget.id.split('_');
+            var x = coords[1];
+            var y = coords[2];
+
+            if( ! dojo.hasClass( 'square_'+x+'_'+y, 'possibleMove' ) )
+            {
+                // This is not a possible move => the click does nothing
+                return ;
+            }
+            
+            if( this.checkAction( 'playDisc' ) )    // Check that this action is possible at this moment
+            {            
+                this.ajaxcall( "/reversiristonj/reversiristonj/playDisc.html", {
+                    x:x,
+                    y:y
+                }, this, function( result ) {} );
+            }            
+        },
         
         /* Example:
         
@@ -254,7 +282,12 @@ function (dojo, declare) {
         setupNotifications: function()
         {
             console.log( 'notifications subscriptions setup' );
-            
+            dojo.subscribe( 'playDisc', this, "notif_playDisc" );
+            this.notifqueue.setSynchronous( 'playDisc', 500 );
+            dojo.subscribe( 'turnOverDiscs', this, "notif_turnOverDiscs" );
+            this.notifqueue.setSynchronous( 'turnOverDiscs', 1500 );
+            dojo.subscribe( 'newScores', this, "notif_newScores" );
+            this.notifqueue.setSynchronous( 'newScores', 500 );
             // TODO: here, associate your game notifications with local methods
             
             // Example 1: standard notification handling
@@ -269,6 +302,55 @@ function (dojo, declare) {
         },  
         
         // TODO: from this point and below, you can write your game notifications handling methods
+
+        notif_playDisc: function( notif )
+        {
+            // Remove current possible moves (makes the board more clear)
+            dojo.query( '.possibleMove' ).removeClass( 'possibleMove' );        
+        
+            this.addTokenOnBoard( notif.args.x, notif.args.y, notif.args.player_id );
+        },
+        notif_turnOverDiscs: function( notif )
+        {
+            // Get the color of the player who is returning the discs
+            var targetColor = this.gamedatas.players[ notif.args.player_id ].color;
+
+            // Make these discs blink and set them to the specified color
+            for( var i in notif.args.turnedOver )
+            {
+                var token = notif.args.turnedOver[ i ];
+                
+                // Make the token blink 2 times
+                var anim = dojo.fx.chain( [
+                    dojo.fadeOut( { node: 'token_'+token.x+'_'+token.y } ),
+                    dojo.fadeIn( { node: 'token_'+token.x+'_'+token.y } ),
+                    dojo.fadeOut( { 
+                                    node: 'token_'+token.x+'_'+token.y,
+                                    onEnd: function( node ) {
+
+                                        // Remove any color class
+                                        dojo.removeClass( node, [ 'tokencolor_000000', 'tokencolor_ffffff' ] );
+                                        // ... and add the good one
+                                        dojo.addClass( node, 'tokencolor_'+targetColor );
+                                                             
+                                    } 
+                                  } ),
+                    dojo.fadeIn( { node: 'token_'+token.x+'_'+token.y  } )
+                                 
+                ] ); // end of dojo.fx.chain
+
+                // ... and launch the animation
+                anim.play();                
+            }
+        },
+        notif_newScores: function( notif )
+        {
+            for( var player_id in notif.args.scores )
+            {
+                var newScore = notif.args.scores[ player_id ];
+                this.scoreCtrl[ player_id ].toValue( newScore );
+            }
+        },
         
         /*
         Example:
