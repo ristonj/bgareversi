@@ -171,7 +171,7 @@ class reversiristonj extends Table
 
     function getOpponentPlayerId()
     {
-        $player_ids =  array_keys($this->loadPlayersBasicInfos());
+        $player_ids = array_keys($this->loadPlayersBasicInfos());
         $opposite_player_id = self::getCurrentPlayerId();
         if($player_ids[0] == self::getCurrentPlayerId())
         {
@@ -183,26 +183,79 @@ class reversiristonj extends Table
         }
         return $opposite_player_id;
     }
-    function getTurnedOverDiscs($board,$x,$y)
+    function getPlayerByPosition($board,$x,$y)
     {
-        $turned_discs = 0;
-        $new_x = $x;
-        $opponent_player_id = self::getOpponentPlayerId();
-        
-        for($i = -1; $i <= 1; $i++)
+        if(self::isOutOfBounds($x) || self::isOutOfBounds($y))
         {
-            $new_x += $i;
-            $new_y = $y;
-            for($j = -1; $j <= 1; $j++)
+            return null;
+        }
+        return array_filter($board, function($v) use ($x, $y)
+        {
+            return ($v['x'] == $x && $v['y'] == $y);
+        })[0]['player'];
+    }
+    function getPossibleMoves()
+    {
+        $board = self::getObjectListFromDB( 
+            "SELECT board_x x, board_y y, board_player player
+            FROM board" );
+        $result = array();
+        for($x = 1; $x <= 8; $x++)
+        {
+            for($y = 1; $y <= 8; $y++)
             {
-                if(($i != 0) && ($j != 0))
+                if(self::getPlayerByPosition($board, $x, $y) == null)
                 {
-                    $new_y += $j;
-                    
+                    if(self::getTurnedOverDiscs($board, $x, $y) > 0)
+                    {
+                        array_push($result, array("x" => $x, "y" => $y));
+                    }
                 }
             }
         }
+        return $result;
     }
+    function getTurnedDiscsByDirection($board,$x,$y,$i,$j)
+    {
+        $new_x = $x+$i;
+        $new_y = $y+$j;
+        $space_player_id = self::getPlayerByPosition($board,$new_x,$new_y);
+        $total = 0;
+
+        while($space_player_id != self::getActivePlayerId())
+        {
+            if($space_player_id == null)
+            {
+                return 0;
+            }
+            $total++;
+            $new_x += $i;
+            $new_y += $j;
+        }
+        return $total;
+    }
+    function getTurnedOverDiscs($board,$x,$y)
+    {
+        $turned_discs = 0;
+        for($i = -1; $i <= 1; $i++)
+        {
+            for($j = -1; $j <= 1; $j++)
+            {
+                $turned_discs += self::getTurnedDiscsByDirection(
+                    $board,
+                    $x,
+                    $y,
+                    $i,
+                    $j);
+            }
+        }
+    }
+    function isOutOfBounds($index)
+    {
+        return ($index < 1) || ($index > 8);
+    }
+
+    
 
 
 

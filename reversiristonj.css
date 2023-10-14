@@ -55,6 +55,13 @@
     position: relative;
 }
 
+.possibleMove {
+    background-color: white;
+    opacity: 0.2;
+    filter:alpha(opacity=20); /* For IE8 and earlier */  
+    cursor: pointer;  
+}
+
 .square {
     width: 62px;
     height: 62px;

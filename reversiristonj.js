@@ -86,7 +86,9 @@ function (dojo, declare) {
             
             switch( stateName )
             {
-            
+                case 'playerTurn':
+                    this.updatePossibleMoves( args.args.possibleMoves );
+                    break;
             /* Example:
             
             case 'myGameState':
@@ -98,8 +100,8 @@ function (dojo, declare) {
            */
            
            
-            case 'dummmy':
-                break;
+                case 'dummmy':
+                    break;
             }
         },
 
@@ -174,6 +176,22 @@ function (dojo, declare) {
             
             this.placeOnObject( 'token_'+x+'_'+y, 'overall_player_board_'+player );
             this.slideToObject( 'token_'+x+'_'+y, 'square_'+x+'_'+y ).play();
+        },
+        updatePossibleMoves: function( possibleMoves )
+        {
+            // Remove current possible moves
+            dojo.query( '.possibleMove' ).removeClass( 'possibleMove' );
+
+            for( var x in possibleMoves )
+            {
+                for( var y in possibleMoves[ x ] )
+                {
+                    // x,y is a possible move
+                    dojo.addClass( 'square_'+x+'_'+y, 'possibleMove' );
+                }            
+            }
+                        
+            this.addTooltipToClass( 'possibleMove', '', _('Place a disc here') );
         },
 
         ///////////////////////////////////////////////////
