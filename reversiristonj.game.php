@@ -250,7 +250,7 @@ class reversiristonj extends Table
         {
             for($j = -1; $j <= 1; $j++)
             {
-                array_push($turned_discs, self::getTurnedDiscsByDirection(
+                $turned_discs = array_merge($turned_discs, self::getTurnedDiscsByDirection(
                     $board,
                     $active_player_id,
                     $x,
