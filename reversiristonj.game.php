@@ -252,6 +252,7 @@ class reversiristonj extends Table
                     $j);
             }
         }
+        return $turned_discs;
     }
     function isOutOfBounds($index)
     {
