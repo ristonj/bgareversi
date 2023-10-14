@@ -169,6 +169,13 @@ class reversiristonj extends Table
         In this space, you can put any utility methods useful for your game logic
     */
 
+    function getBoard()
+    {
+        $board = self::getObjectListFromDB( 
+            "SELECT board_x x, board_y y, board_player player
+            FROM board" );
+        return $board;
+    }
     function getOpponentPlayerId()
     {
         $player_ids = array_keys($this->loadPlayersBasicInfos());
@@ -197,9 +204,7 @@ class reversiristonj extends Table
     }
     function getPossibleMoves($active_player_id)
     {
-        $board = self::getObjectListFromDB( 
-            "SELECT board_x x, board_y y, board_player player
-            FROM board" );
+        $board = self::getBoard();
         $result = array();
         for($x = 1; $x <= 8; $x++)
         {
