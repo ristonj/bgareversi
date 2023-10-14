@@ -213,7 +213,7 @@ class reversiristonj extends Table
                 if(self::getPlayerByPosition($board, $x, $y) == null)
                 {
                     $turnedOverDiscs = self::getTurnedOverDiscs($board, $active_player_id, $x, $y);
-                    if( $turnedOverDiscs > 0)
+                    if( count($turnedOverDiscs) > 0)
                     {
                         array_push($result, array("x" => $x, "y" => $y));
                     }
@@ -228,35 +228,35 @@ class reversiristonj extends Table
         $new_x = $x+$i;
         $new_y = $y+$j;
         $space_player_id = self::getPlayerByPosition($board,$new_x,$new_y);
-        $total = 0;
+        $turned_disc_positions = array();
 
         while($space_player_id != $active_player_id)
         {
             if($space_player_id == null)
             {
-                return 0;
+                return array();
             }
-            $total++;
+            array_push($turned_disc_positions, array('x'=>$new_x,'y'=>$new_y));
             $new_x += $i;
             $new_y += $j;
             $space_player_id = self::getPlayerByPosition($board,$new_x,$new_y);
         }
-        return $total;
+        return $turned_disc_positions;
     }
     function getTurnedOverDiscs($board,$active_player_id,$x,$y)
     {
-        $turned_discs = 0;
+        $turned_discs = array();
         for($i = -1; $i <= 1; $i++)
         {
             for($j = -1; $j <= 1; $j++)
             {
-                $turned_discs += self::getTurnedDiscsByDirection(
+                array_push($turned_disc, self::getTurnedDiscsByDirection(
                     $board,
                     $active_player_id,
                     $x,
                     $y,
                     $i,
-                    $j);
+                    $j));
             }
         }
         return $turned_discs;
@@ -310,7 +310,7 @@ class reversiristonj extends Table
         self::checkAction( 'playDisc' );
         $board = self::getBoard();
         $player_id = self::getActivePlayerId();
-        $turnedOverDiscs = self::getTurnedOverDiscs( $x, $y, $player_id, $board );
+        $turnedOverDiscs = self::getTurnedOverDiscs( $board, $player_id, $x, $y);
         
         if( count( $turnedOverDiscs ) > 0 )
         {
