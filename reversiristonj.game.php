@@ -207,7 +207,11 @@ class reversiristonj extends Table
             {
                 if(self::getPlayerByPosition($board, $x, $y) == null)
                 {
-                    if(self::getTurnedOverDiscs($board, $active_player_id, $x, $y) > 0)
+                    $turnedOverDiscs = self::getTurnedOverDiscs($board, $active_player_id, $x, $y);
+                    self::dump( "x: ", $x ); 
+                    self::dump( "y: ", $y );
+                    self::dump( "Turned over discs:", $turnedOverDiscs);
+                    if( $turnedOverDiscs > 0)
                     {
                         array_push($result, array("x" => $x, "y" => $y));
                     }
