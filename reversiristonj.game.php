@@ -232,6 +232,7 @@ class reversiristonj extends Table
             $total++;
             $new_x += $i;
             $new_y += $j;
+            $space_player_id = self::getPlayerByPosition($board,$new_x,$new_y);
         }
         return $total;
     }
