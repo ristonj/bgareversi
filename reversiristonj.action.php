@@ -41,7 +41,14 @@
   	
   	// TODO: defines your action entry points there
 
-
+    public function playDisc()
+    {
+        self::setAjaxMode();     
+        $x = self::getArg( "x", AT_posint, true );
+        $y = self::getArg( "y", AT_posint, true );
+        $result = $this->game->playDisc( $x, $y );
+        self::ajaxResponse( );
+    }
     /*
     
     Example:
