@@ -182,10 +182,9 @@ function (dojo, declare) {
             // Remove current possible moves
             dojo.query( '.possibleMove' ).removeClass( 'possibleMove' );
 
-            console.log("Move: " + JSON.stringify(possibleMoves, null, 4));
-            for( var move in possibleMoves)
+            for( var i=0; i<possibleMoves.length; i++)
             {
-                dojo.addClass( 'square_'+move[0]+'_'+move[1], 'possibleMove' );
+                dojo.addClass( 'square_'+move[i].x+'_'+move[i].y, 'possibleMove' );
             }
                         
             this.addTooltipToClass( 'possibleMove', '', _('Place a disc here') );
