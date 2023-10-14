@@ -182,9 +182,9 @@ function (dojo, declare) {
             // Remove current possible moves
             dojo.query( '.possibleMove' ).removeClass( 'possibleMove' );
 
+            console.log("Move: " + JSON.stringify(move, null, 4));
             for( var move in possibleMoves)
             {
-                console.log("Move: " + JSON.stringify(move, null, 4));
                 dojo.addClass( 'square_'+move[0]+'_'+move[1], 'possibleMove' );
             }
                         
