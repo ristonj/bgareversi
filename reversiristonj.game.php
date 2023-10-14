@@ -194,7 +194,7 @@ class reversiristonj extends Table
             return ($v['x'] == $x && $v['y'] == $y);
         })[0]['player'];
     }
-    function getPossibleMoves()
+    function getPossibleMoves($active_player_id)
     {
         $board = self::getObjectListFromDB( 
             "SELECT board_x x, board_y y, board_player player
@@ -206,7 +206,7 @@ class reversiristonj extends Table
             {
                 if(self::getPlayerByPosition($board, $x, $y) == null)
                 {
-                    if(self::getTurnedOverDiscs($board, $x, $y) > 0)
+                    if(self::getTurnedOverDiscs($board, $active_player_id, $x, $y) > 0)
                     {
                         array_push($result, array("x" => $x, "y" => $y));
                     }
@@ -215,14 +215,14 @@ class reversiristonj extends Table
         }
         return $result;
     }
-    function getTurnedDiscsByDirection($board,$x,$y,$i,$j)
+    function getTurnedDiscsByDirection($board,$active_player_id,$x,$y,$i,$j)
     {
         $new_x = $x+$i;
         $new_y = $y+$j;
         $space_player_id = self::getPlayerByPosition($board,$new_x,$new_y);
         $total = 0;
 
-        while($space_player_id != self::getActivePlayerId())
+        while($space_player_id != $active_player_id)
         {
             if($space_player_id == null)
             {
@@ -234,7 +234,7 @@ class reversiristonj extends Table
         }
         return $total;
     }
-    function getTurnedOverDiscs($board,$x,$y)
+    function getTurnedOverDiscs($board,$active_player_id,$x,$y)
     {
         $turned_discs = 0;
         for($i = -1; $i <= 1; $i++)
@@ -243,6 +243,7 @@ class reversiristonj extends Table
             {
                 $turned_discs += self::getTurnedDiscsByDirection(
                     $board,
+                    $active_player_id,
                     $x,
                     $y,
                     $i,
@@ -325,7 +326,7 @@ class reversiristonj extends Table
     function argPlayerTurn()
     {
         return array(
-            'actplayer' => self::getCurrentPlayerId()
+            'possibleMoves' => self::getPossibleMoves( self::getActivePlayerId() )
         );
     }
 
