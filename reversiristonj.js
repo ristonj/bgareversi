@@ -184,7 +184,7 @@ function (dojo, declare) {
 
             for( var move in possibleMoves)
             {
-                dojo.addClass( 'square_'+move['x']+'_'+move['y'], 'possibleMove' );
+                dojo.addClass( 'square_'+move[0]+'_'+move[1], 'possibleMove' );
             }
                         
             this.addTooltipToClass( 'possibleMove', '', _('Place a disc here') );
