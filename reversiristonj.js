@@ -184,7 +184,7 @@ function (dojo, declare) {
 
             for( var move in possibleMoves)
             {
-                console.log(JSON.stringify(move, null, 4));
+                console.log("Move: " + JSON.stringify(move, null, 4));
                 dojo.addClass( 'square_'+move[0]+'_'+move[1], 'possibleMove' );
             }
                         
